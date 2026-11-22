@@ -1,30 +1,26 @@
 [project]
-name = "backend"
+name = "securdocs-rag"
 version = "0.1.0"
-description = "Add your description here"
+description = "Role-based document assistant powered by Streamlit and RAG"
 readme = "README.md"
-authors = [
-    { name = "Vishwarajsinh Kher", email = "vishwarajsinh.kher100@gmail.com" }
-]
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 dependencies = [
-    "dotenv>=0.9.9",
-    "fastapi>=0.162.0",
     "langchain-chroma>=1.1.0",
     "langchain-community>=0.4.2",
     "langchain-core>=1.7.6",
     "langchain-groq>=1.1.3",
     "langchain-huggingface>=1.2.3",
     "langchain-text-splitters>=1.1.3",
-    "pydantic>=2.14.3",
     "pypdf>=6.21.4",
+    "python-dotenv>=1.1.0",
     "sentence-transformers>=6.2.0",
-    "typing>=3.10.0.0",
+    "streamlit>=1.57.0",
 ]
-
-[project.scripts]
-backend = "backend:main"
 
 [build-system]
 requires = ["uv_build>=0.13.0,<0.14.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "securdocs"
+module-root = "src"

@@ -1,7 +1,9 @@
 import sqlite3
+from pathlib import Path
 from typing import Optional, Tuple
 
-SQLITE_DATABASE_PATH = "users.db"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+SQLITE_DATABASE_PATH = PROJECT_ROOT / "users.db"
 
 DEFAULT_SEED_USERS = [
     ("alice", "pass135", "ceo"),
@@ -16,15 +18,14 @@ DEFAULT_SEED_USERS = [
 
 
 def create_sqlite_connection() -> sqlite3.Connection:
-    """Creates and returns a SQLite database connection."""
+    """Create and return a SQLite database connection."""
     return sqlite3.connect(SQLITE_DATABASE_PATH)
 
 
 def initialize_user_database() -> None:
-    """Creates the users table and seeds initial user records if missing."""
+    """Create the users table and seed initial user records if missing."""
     with create_sqlite_connection() as db_connection:
         db_cursor = db_connection.cursor()
-
         db_cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,37 +34,29 @@ def initialize_user_database() -> None:
                 role TEXT NOT NULL
             )
         """)
-
         db_cursor.executemany(
             """
             INSERT OR IGNORE INTO users (username, password, role)
             VALUES (?, ?, ?)
-        """,
+            """,
             DEFAULT_SEED_USERS,
         )
-
-        db_connection.commit()
 
 
 def verify_user_credentials(
     username_input: str, password_input: str
 ) -> Tuple[bool, Optional[str]]:
-    """
-    Validates user credentials against the database.
-    Returns (True, user_role) if successful, otherwise (False, None).
-    """
+    """Return whether credentials match and the assigned role, if valid."""
     with create_sqlite_connection() as db_connection:
         db_cursor = db_connection.cursor()
-
         db_cursor.execute(
             """
             SELECT password, role
             FROM users
             WHERE username = ?
-        """,
+            """,
             (username_input,),
         )
-
         user_record = db_cursor.fetchone()
 
     if user_record:
@@ -72,8 +65,3 @@ def verify_user_credentials(
             return True, assigned_role
 
     return False, None
-
-
-if __name__ == "__main__":
-    initialize_user_database()
-    print(f"Database at '{SQLITE_DATABASE_PATH}' initialized successfully.")

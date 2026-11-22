@@ -1,0 +1,1 @@
+"""SecurDocs application package."""
